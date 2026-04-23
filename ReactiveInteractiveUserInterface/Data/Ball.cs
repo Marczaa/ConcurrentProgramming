@@ -45,6 +45,10 @@ namespace TP.ConcurrentProgramming.Data
             RaiseNewPositionChangeNotification();
         }
 
+        public IVector GetPosition() {
+              return Position;
+        }
+
         #endregion private
     }
 }

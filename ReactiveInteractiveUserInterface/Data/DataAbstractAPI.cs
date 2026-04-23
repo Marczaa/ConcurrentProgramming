@@ -25,6 +25,8 @@ namespace TP.ConcurrentProgramming.Data
 
         public abstract void Start(int numberOfBalls, Action<IVector, IBall> upperLayerHandler);
 
+        public abstract IVector CreateVector (double x, double y);
+
         #endregion public API
 
         #region IDisposable
@@ -58,5 +60,6 @@ namespace TP.ConcurrentProgramming.Data
         event EventHandler<IVector> NewPositionNotification;
 
         IVector Velocity { get; set; }
+
     }
 }

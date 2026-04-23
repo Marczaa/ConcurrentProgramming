@@ -18,7 +18,7 @@ namespace TP.ConcurrentProgramming.Data
 
         public DataImplementation()
         {
-            MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(20));
+            MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(50));
         }
 
         #endregion ctor
@@ -35,11 +35,18 @@ namespace TP.ConcurrentProgramming.Data
             for (int i = 0; i < numberOfBalls; i++)
             {
                 Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
-                Ball newBall = new(startingPosition, new Vector(0,0));
+                Vector Velocity = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
+                Ball newBall = new(startingPosition, Velocity);
                 upperLayerHandler(startingPosition, newBall);
                 BallsList.Add(newBall);
             }
         }
+
+        public override IVector CreateVector(double x, double y)
+        {
+            return new Vector(x, y);
+        }
+
 
         #endregion DataAbstractAPI
 
@@ -82,20 +89,7 @@ namespace TP.ConcurrentProgramming.Data
         {
             foreach (Ball item in BallsList)
             {
-
-                var pushX = (RandomGenerator.NextDouble() - 0.5) * 10;
-                var pushY = (RandomGenerator.NextDouble() - 0.5) * 10;
-
-
-                double newX = (item.Velocity.x * 0.95) + (pushX * 0.10);
-                double newY = (item.Velocity.y * 0.95) + (pushY * 0.10);
-
-                var newVelocity = new Vector(newX, newY);
-
-                item.Velocity = newVelocity;
-
-                item.Move(newVelocity);
-
+                item.Move(new Vector(item.Velocity.x, item.Velocity.y));
             }
 
         }
