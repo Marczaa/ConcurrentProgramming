@@ -71,6 +71,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             {
                 throw new NotImplementedException();
             }
+
+            public override IVector CreateVector(double x, double y)
+            {
+                throw new NotImplementedException();
+            }
         }
 
         private class DataLayerDisposeFixcure : Data.DataAbstractAPI
@@ -83,6 +88,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             }
 
             public override void Start(int numberOfBalls, Action<IVector, Data.IBall> upperLayerHandler)
+            {
+                throw new NotImplementedException();
+            }
+            public override IVector CreateVector(double x, double y)
             {
                 throw new NotImplementedException();
             }
@@ -101,6 +110,11 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
                 StartCalled = true;
                 NumberOfBallseCreated = numberOfBalls;
                 upperLayerHandler(new DataVectorFixture(), new DataBallFixture());
+            }
+
+            public override IVector CreateVector(double x, double y)
+            {
+                throw new NotImplementedException();
             }
 
             private record DataVectorFixture : Data.IVector
