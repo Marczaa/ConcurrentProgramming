@@ -33,6 +33,8 @@ namespace TP.ConcurrentProgramming.Data
 
         public abstract void Dispose();
 
+        public abstract void Move();
+
         #endregion IDisposable
 
         #region private

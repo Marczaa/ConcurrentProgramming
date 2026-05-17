@@ -23,6 +23,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
         {
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+            MoveTimer = new Timer(_ => layerBellow.Move(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(30));
         }
 
         #endregion ctor
@@ -34,6 +35,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             if (Disposed)
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             layerBellow.Dispose();
+            MoveTimer.Dispose();
             Disposed = true;
         }
 
@@ -43,7 +45,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
-            layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.x), new Ball(databall, layerBellow)));
+            layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall, layerBellow)));
         }
 
         #endregion BusinessLogicAbstractAPI
@@ -53,6 +55,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         private bool Disposed = false;
 
         private readonly UnderneathLayerAPI layerBellow;
+
+        private readonly Timer MoveTimer;
 
         #endregion private
 
