@@ -33,8 +33,6 @@ namespace TP.ConcurrentProgramming.Data
 
         public abstract void Dispose();
 
-        public abstract void Move();
-
         #endregion IDisposable
 
         #region private
@@ -63,5 +61,12 @@ namespace TP.ConcurrentProgramming.Data
 
         IVector Velocity { get; set; }
 
+        IVector Position { get; set; }
+
+        double Diameter { get; }
+
+        double Mass { get; }
+
+        public (IVector Position, IVector Velocity) getPositionAndVelocity();
     }
 }

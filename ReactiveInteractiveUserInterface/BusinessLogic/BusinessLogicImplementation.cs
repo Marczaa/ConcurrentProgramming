@@ -9,6 +9,7 @@
 //_____________________________________________________________________________________________________________________________________
 
 using System.Diagnostics;
+using TP.ConcurrentProgramming.Data;
 using UnderneathLayerAPI = TP.ConcurrentProgramming.Data.DataAbstractAPI;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
@@ -23,7 +24,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
         {
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
-            MoveTimer = new Timer(_ => layerBellow.Move(), null, TimeSpan.Zero, TimeSpan.FromMilliseconds(30));
         }
 
         #endregion ctor
@@ -35,7 +35,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             if (Disposed)
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             layerBellow.Dispose();
-            MoveTimer.Dispose();
             Disposed = true;
         }
 
@@ -45,7 +44,19 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
-            layerBellow.Start(numberOfBalls, (startingPosition, databall) => upperLayerHandler(new Position(startingPosition.x, startingPosition.y), new Ball(databall, layerBellow)));
+            layerBellow.Start(numberOfBalls, (startingPosition, databall)  => {
+
+                Ball logicBall = new Ball(databall, layerBellow);
+
+                logicBall.NewPositionNotification += (_, _) => BallCollsion(databall);
+
+                lock (BallsList)
+                {
+                    BallsList.Add( databall);
+                }
+
+                upperLayerHandler(new Position(startingPosition.x, startingPosition.y), logicBall);
+            });
         }
 
         #endregion BusinessLogicAbstractAPI
@@ -53,12 +64,46 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         #region private
 
         private bool Disposed = false;
+        private List<Data.IBall> BallsList = new List<Data.IBall>();
 
         private readonly UnderneathLayerAPI layerBellow;
 
-        private readonly Timer MoveTimer;
+        private void BallCollsion(Data.IBall ball)
+        {
+            var (p1, v1) = ball.getPositionAndVelocity();
+
+            foreach (var databall in BallsList)
+                {
+                lock (BallsList) {
+                    if (ReferenceEquals(ball, databall))
+                    {
+                        continue;
+                    }
+
+                    var (p2, v2) = databall.getPositionAndVelocity();
+
+                    if (AreBallsColliding(ball, databall))
+                    {
+                        Debug.Print("Colision detected between balls detected");
+                    }
+                }
+            }
+
+        }
+
+        private bool AreBallsColliding(Data.IBall ball1, Data.IBall ball2)
+        {
+            double dx = ball1.Position.x - ball2.Position.x;
+            double dy = ball1.Position.y - ball2.Position.y;
+            double distanceSquared = dx * dx + dy * dy;
+            double radiusSum = ball1.Diameter + ball2.Diameter;
+
+            return distanceSquared <= radiusSum * radiusSum;
+        }
 
         #endregion private
+
+
 
         #region TestingInfrastructure
 

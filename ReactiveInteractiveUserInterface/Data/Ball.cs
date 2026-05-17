@@ -8,6 +8,8 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
+using System.Runtime.CompilerServices;
+
 namespace TP.ConcurrentProgramming.Data
 {
     internal class Ball : IBall
@@ -16,8 +18,13 @@ namespace TP.ConcurrentProgramming.Data
 
         internal Ball(Vector initialPosition, Vector initialVelocity)
         {
-            Position = initialPosition;
-            Velocity = initialVelocity;
+            _position = initialPosition;
+            _velocity = initialVelocity;
+            _running = true;
+            _diameter = 10;
+            _mass = 1;
+            thread = new Thread(Run);
+            thread.Start();
         }
 
         #endregion ctor
@@ -26,28 +33,112 @@ namespace TP.ConcurrentProgramming.Data
 
         public event EventHandler<IVector>? NewPositionNotification;
 
-        public IVector Velocity { get; set; }
+        public IVector Velocity
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _velocity;
+                }
+            }
+            set
+            {
+                lock (_lock)
+                {
+                    _velocity = new Vector(value.x, value.y);
+                }
+            }
+        }
+        public IVector Position
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _position;
+                }
+            }
+            set
+            {
+                lock (_lock)
+                {
+                    _position = new Vector(value.x, value.y);
+                }
+            }
+        }
+
+        public (IVector Position, IVector Velocity) getPositionAndVelocity()
+        { 
+            {
+                lock (_lock)
+                {
+                    return (_position, _velocity);
+                }
+            }
+        }
+
+        public double Diameter
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _diameter;
+                }
+            }
+        }
+
+        public double Mass
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _mass;
+                }
+            }
+        }
 
         #endregion IBall
 
+        internal void Move()
+        {
+            lock (_lock)
+            {
+                _position = new Vector(_position.x + _velocity.x, _position.y + _velocity.y);
+            }
+            RaiseNewPositionChangeNotification();
+
+        }
+
+        internal void Stop() 
+        {
+            _running = false;
+        }
+
         #region private
 
-        private Vector Position;
-
+        private Vector _position;
+        private Vector _velocity;
+        private bool _running;
+        private double _diameter;
+        private double _mass;
+        private readonly Thread thread;
+        private readonly object _lock = new object();
         private void RaiseNewPositionChangeNotification()
         {
-            NewPositionNotification?.Invoke(this, Position);
+            NewPositionNotification?.Invoke(this, _position);
         }
 
-        internal void Move(Vector delta)
-        {
-            Position = new Vector(Position.x + delta.x, Position.y + delta.y);
-            RaiseNewPositionChangeNotification();
+        private void Run() {
+            int time = 1000 / 60;
+            while (_running) { 
+                Thread.Sleep(time);
+                Move();
+            }
         }
 
-        public IVector GetPosition() {
-              return Position;
-        }
 
         #endregion private
     }
