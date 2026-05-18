@@ -52,7 +52,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                 lock (BallsList)
                 {
-                    BallsList.Add( databall);
+                    BallsList.Add(databall);
                 }
 
                 upperLayerHandler(new Position(startingPosition.x, startingPosition.y), logicBall);
@@ -67,6 +67,17 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         private List<Data.IBall> BallsList = new List<Data.IBall>();
 
         private readonly UnderneathLayerAPI layerBellow;
+
+        private class BLVector : IVector
+        {
+            internal BLVector(double x, double y)
+            {
+                this.x = x;
+                this.y = y;
+            }
+            public double x { get; init; }
+            public double y { get; init; }
+        }
 
         private void BallCollsion(Data.IBall ball)
         {
@@ -84,7 +95,24 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                     if (AreBallsColliding(ball, databall))
                     {
-                        Debug.Print("Colision detected between balls detected");
+                        var deltax = p1.x - p2.x;
+                        var deltay = p1.y - p2.y;
+
+                        var mas1 = (2 * databall.Mass / (ball.Mass + databall.Mass));
+                        var mas2 = (2 * ball.Mass / (ball.Mass + databall.Mass));
+
+                        var norm = deltay * deltay + deltax * deltax;
+
+                        var dot = (v1.x - v2.x) * deltax + (v1.y - v2.y) * deltay;
+
+                        if (dot >= 0) continue; // Don't change the velocity if the balls are already moving away from each other
+
+                        var scale1 = mas1 * dot / norm;
+                        var scale2 = mas2 * dot / norm;
+
+
+                        ball.Velocity = new BLVector(v1.x - scale1 * deltax, v1.y - scale1 * deltay);
+                        databall.Velocity = new BLVector(v2.x + scale2 * deltax, v2.y + scale2 * deltay);
                     }
                 }
             }

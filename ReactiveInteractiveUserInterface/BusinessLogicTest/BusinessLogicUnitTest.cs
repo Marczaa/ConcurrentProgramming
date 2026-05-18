@@ -76,11 +76,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
             {
                 throw new NotImplementedException();
             }
-
-            public override void Move()
-            {
-                throw new NotImplementedException();
-            }
         }
 
         private class DataLayerDisposeFixcure : Data.DataAbstractAPI
@@ -101,10 +96,6 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
                 throw new NotImplementedException();
             }
 
-            public override void Move()
-            {
-                throw new NotImplementedException();
-            }
         }
 
         private class DataLayerStartFixcure : Data.DataAbstractAPI
@@ -141,12 +132,15 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
 
                 public event EventHandler<IVector>? NewPositionNotification = null;
+
+                public double Diameter { get; }
+
+                public double Mass { get; }
+
+                public (IVector Position, IVector Velocity) getPositionAndVelocity() { return (Position, Velocity); }
+
             }
 
-            public override void Move()
-            {
-                throw new NotImplementedException();
-            }
         }
 
         #endregion testing instrumentation
