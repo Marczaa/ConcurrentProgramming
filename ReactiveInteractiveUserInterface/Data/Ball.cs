@@ -20,11 +20,9 @@ namespace TP.ConcurrentProgramming.Data
         {
             _position = initialPosition;
             _velocity = initialVelocity;
-            _running = true;
             _diameter = 10;
             _mass = 1;
-            thread = new Thread(Run);
-            thread.Start();
+
         }
 
         #endregion ctor
@@ -102,7 +100,7 @@ namespace TP.ConcurrentProgramming.Data
 
         #endregion IBall
 
-        internal void Move()
+        public void Move()
         {
             lock (_lock)
             {
@@ -114,30 +112,20 @@ namespace TP.ConcurrentProgramming.Data
 
         internal void Stop() 
         {
-            _running = false;
         }
 
         #region private
 
         private Vector _position;
         private Vector _velocity;
-        private bool _running;
         private double _diameter;
         private double _mass;
-        private readonly Thread thread;
         private readonly object _lock = new object();
         private void RaiseNewPositionChangeNotification()
         {
             NewPositionNotification?.Invoke(this, _position);
         }
 
-        private void Run() {
-            int time = 1000 / 60;
-            while (_running) { 
-                Thread.Sleep(time);
-                Move();
-            }
-        }
 
 
         #endregion private

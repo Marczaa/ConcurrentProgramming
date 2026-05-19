@@ -8,7 +8,6 @@
 //
 //_____________________________________________________________________________________________________________________________________
 
-using System.Numerics;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
@@ -25,7 +24,10 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         {
             this.ball = ball;
             this.dataLayer = dataLayer;
-            ball.NewPositionNotification += RaisePositionChangeEvent;
+            ball.NewPositionNotification += RaisePositionChangeEvent; 
+            thread = new Thread(Run);
+            thread.Start();
+            _running = true;
         }
 
         #region IBall
@@ -35,6 +37,24 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         #endregion IBall
 
         #region private
+
+        private bool _running;
+        private readonly Thread thread;
+
+        private void Run()
+        {
+            int time = 1000 / 60;
+            while (_running)
+            {
+                Thread.Sleep(time);
+                ball.Move();
+            }
+        }
+
+        internal void Stop() {
+            _running = false;
+        }
+
 
         private void RaisePositionChangeEvent(object? sender, Data.IVector dataPosition)
         {

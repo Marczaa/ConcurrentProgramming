@@ -124,7 +124,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
             public event EventHandler<Data.IVector>? NewPositionNotification;
 
-            internal void Move()
+            public void Move()
             {
 
                 Position = new VectorFixture(Position.x + Velocity.x, Position.y + Velocity.y);

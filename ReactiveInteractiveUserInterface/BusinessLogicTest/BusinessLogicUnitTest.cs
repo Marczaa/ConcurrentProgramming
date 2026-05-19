@@ -137,7 +137,9 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
                 public double Mass { get; }
 
-                public (IVector Position, IVector Velocity) getPositionAndVelocity() { return (Position, Velocity); }
+                public void Move() { throw new NotImplementedException(); }
+
+                public (IVector Position, IVector Velocity) getPositionAndVelocity() { throw new NotImplementedException(); }
 
             }
 
