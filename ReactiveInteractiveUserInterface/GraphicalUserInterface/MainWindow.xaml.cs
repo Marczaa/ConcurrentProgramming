@@ -22,11 +22,11 @@ namespace TP.ConcurrentProgramming.PresentationView
         {
             Random random = new Random();
             InitializeComponent();
-            MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
             double screenWidth = SystemParameters.PrimaryScreenWidth;
             double screenHeight = SystemParameters.PrimaryScreenHeight;
-            viewModel.Start(random.Next(5, 10));
         }
+
+        private bool started = false;
 
         /// <summary>
         /// Raises the <seealso cref="System.Windows.Window.Closed"/> event.
@@ -37,6 +37,18 @@ namespace TP.ConcurrentProgramming.PresentationView
             if (DataContext is MainWindowViewModel viewModel)
                 viewModel.Dispose();
             base.OnClosed(e);
+        }
+
+        private void StartButton(object sender, RoutedEventArgs e)
+        {
+            if (started) {
+                return;
+            }
+            if (int.TryParse(BallCount.Text, out int count))
+            {
+                MainWindowViewModel viewModel = (MainWindowViewModel)DataContext;
+                viewModel.Start(count);
+            }
         }
     }
 }

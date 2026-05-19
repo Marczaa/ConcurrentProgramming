@@ -81,11 +81,13 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private void BallCollsion(Data.IBall ball)
         {
-            var (p1, v1) = ball.getPositionAndVelocity();
+            lock (BallsList)
+            {
+
+                var (p1, v1) = ball.getPositionAndVelocity();
 
             foreach (var databall in BallsList)
                 {
-                lock (BallsList) {
                     if (ReferenceEquals(ball, databall))
                     {
                         continue;
