@@ -9,6 +9,8 @@
 //_____________________________________________________________________________________________________________________________________
 
 
+using System.Diagnostics;
+
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
     internal class Ball : IBall
@@ -43,11 +45,17 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
         private void Run()
         {
-            int time = 1000 / 60;
             while (_running)
             {
-                Thread.Sleep(time);
+                
+                Stopwatch sw = Stopwatch.StartNew();
                 ball.Move();
+                sw.Stop();
+
+                int time = 1000 / 60 - (int)sw.ElapsedMilliseconds;
+                if (time > 0) 
+                    Thread.Sleep(time);
+
             }
         }
 

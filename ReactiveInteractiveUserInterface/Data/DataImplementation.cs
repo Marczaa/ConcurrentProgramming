@@ -18,7 +18,6 @@ namespace TP.ConcurrentProgramming.Data
 
         public DataImplementation()
         {
-            //MoveTimer = new Timer(Move, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(30));
         }
 
         #endregion ctor
@@ -36,7 +35,7 @@ namespace TP.ConcurrentProgramming.Data
             {
                 Vector startingPosition = new(random.Next(100, 400 - 100), random.Next(100, 400 - 100));
                 Vector Velocity = new((RandomGenerator.NextDouble() - 0.5) * 10, (RandomGenerator.NextDouble() - 0.5) * 10);
-                Ball newBall = new(startingPosition, Velocity);
+                Ball newBall = new(startingPosition, Velocity, i);
                 
                 upperLayerHandler(startingPosition, newBall);
 
@@ -92,21 +91,6 @@ namespace TP.ConcurrentProgramming.Data
         private Random RandomGenerator = new();
         private List<Ball> BallsList = [];
         private readonly object _ballsListLock = new();
-
-
-        /*
-        public override void Move()
-        {
-            lock (_ballsListLock)
-            {
-                foreach (Ball item in BallsList)
-                {
-                    item.Move(new Vector(item.Velocity.x, item.Velocity.y));
-                }
-            }
-
-        }
-        */
 
         #endregion private
 

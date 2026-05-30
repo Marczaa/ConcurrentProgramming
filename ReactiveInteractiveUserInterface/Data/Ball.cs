@@ -16,12 +16,13 @@ namespace TP.ConcurrentProgramming.Data
     {
         #region ctor
 
-        internal Ball(Vector initialPosition, Vector initialVelocity)
+        internal Ball(Vector initialPosition, Vector initialVelocity, int id)
         {
             _position = initialPosition;
             _velocity = initialVelocity;
             _diameter = 10;
             _mass = 1;
+            _id = id;
 
         }
 
@@ -98,6 +99,17 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
+        public double Id
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _id;
+                }
+            }
+        }
+
         #endregion IBall
 
         public void Move()
@@ -120,6 +132,7 @@ namespace TP.ConcurrentProgramming.Data
         private Vector _velocity;
         private double _diameter;
         private double _mass;
+        private int _id;
         private readonly object _lock = new object();
         private void RaiseNewPositionChangeNotification()
         {
