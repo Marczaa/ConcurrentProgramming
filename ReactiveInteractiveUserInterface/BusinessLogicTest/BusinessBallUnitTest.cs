@@ -20,7 +20,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
         {
             DataBallFixture dataBallFixture = new DataBallFixture();
             Data.DataAbstractAPI dataLayer = Data.DataAbstractAPI.GetDataLayer();
-            Ball newInstance = new(dataBallFixture, dataLayer);
+            Logger logger = new Logger();
+            Ball newInstance = new(dataBallFixture, dataLayer, logger);
             int numberOfCallBackCalled = 0;
             newInstance.NewPositionNotification += (sender, position) => { Assert.IsNotNull(sender); Assert.IsNotNull(position); numberOfCallBackCalled++; };
             dataBallFixture.Move();
@@ -121,6 +122,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic.Test
 
             public double Diameter { get; init; } = 10.0;
             public double Mass { get; init; } = 1.0;
+
+            public int Id { get; } = 0;
 
             public event EventHandler<Data.IVector>? NewPositionNotification;
 

@@ -99,7 +99,7 @@ namespace TP.ConcurrentProgramming.Data
             }
         }
 
-        public double Id
+        public int Id
         {
             get
             {
@@ -138,8 +138,6 @@ namespace TP.ConcurrentProgramming.Data
         {
             NewPositionNotification?.Invoke(this, _position);
         }
-
-
 
         #endregion private
     }

@@ -10,6 +10,7 @@
 
 
 using System.Diagnostics;
+using TP.ConcurrentProgramming.Data;
 
 namespace TP.ConcurrentProgramming.BusinessLogic
 {
@@ -18,14 +19,18 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         private const double TableWidth = 372.0;
         private const double TableHeight = 392.0;
 
+        private Logger _logger;
+
         private readonly Data.DataAbstractAPI dataLayer;
 
         private readonly Data.IBall ball;
 
-        public Ball(Data.IBall ball, Data.DataAbstractAPI dataLayer)
+        public Ball(Data.IBall ball, Data.DataAbstractAPI dataLayer, Logger logger)
         {
             this.ball = ball;
             this.dataLayer = dataLayer;
+            this._logger = logger;
+            _logger.Log($"New Ball - ID {ball.Id}, position ({Math.Round(ball.Position.x, 4)}, {Math.Round(ball.Position.y, 4)}), velocity ({Math.Round(ball.Velocity.x, 4)}, {Math.Round(ball.Velocity.y, 4)})");
             ball.NewPositionNotification += RaisePositionChangeEvent; 
             thread = new Thread(Run);
             thread.Start();
@@ -69,22 +74,32 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             double velX = (ball.Velocity.x);
             double velY = (ball.Velocity.y);
 
+            bool bounced = false;
+
             if (dataPosition.x + velX > TableWidth)
             {
                 velX = Math.Abs(velX) * -1;
+                bounced = true;
             }
             else if (dataPosition.x + velX < 0)
             {
                 velX = Math.Abs(velX);
+                bounced = true;
             }
 
             if (dataPosition.y + velY > TableHeight)
             {
                 velY = Math.Abs(velY) * -1;
+                bounced = true;
             }
             else if (dataPosition.y + velY < 0)
             {
                 velY = Math.Abs(velY);
+                bounced = true;
+            }
+
+            if (bounced) {
+                _logger.Log($"Bounce - {ball.Id} position ({Math.Round(dataPosition.x, 4)}, {Math.Round(dataPosition.y, 4)}), new velocity ({Math.Round(velX, 4)}, {Math.Round(velY, 4)})");
             }
 
             ball.Velocity = dataLayer.CreateVector(velX, velY);

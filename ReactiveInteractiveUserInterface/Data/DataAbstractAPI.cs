@@ -67,6 +67,8 @@ namespace TP.ConcurrentProgramming.Data
 
         double Mass { get; }
 
+        int Id { get; }
+
         public void Move();
 
         public (IVector Position, IVector Velocity) getPositionAndVelocity();

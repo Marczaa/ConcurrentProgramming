@@ -24,6 +24,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         internal BusinessLogicImplementation(UnderneathLayerAPI? underneathLayer)
         {
             layerBellow = underneathLayer == null ? UnderneathLayerAPI.GetDataLayer() : underneathLayer;
+            logger = new Logger();
         }
 
         #endregion ctor
@@ -35,6 +36,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
             if (Disposed)
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             layerBellow.Dispose();
+            logger.Dispose();
             Disposed = true;
         }
 
@@ -44,9 +46,12 @@ namespace TP.ConcurrentProgramming.BusinessLogic
                 throw new ObjectDisposedException(nameof(BusinessLogicImplementation));
             if (upperLayerHandler == null)
                 throw new ArgumentNullException(nameof(upperLayerHandler));
+
+            logger.Log($"Program started with {numberOfBalls} balls");
+
             layerBellow.Start(numberOfBalls, (startingPosition, databall)  => {
 
-                Ball logicBall = new Ball(databall, layerBellow);
+                Ball logicBall = new Ball(databall, layerBellow, logger);
 
                 logicBall.NewPositionNotification += (_, _) => BallCollsion(databall);
 
@@ -64,6 +69,7 @@ namespace TP.ConcurrentProgramming.BusinessLogic
         #region private
 
         private bool Disposed = false;
+        private Logger logger;
         private List<Data.IBall> BallsList = new List<Data.IBall>();
 
         private readonly UnderneathLayerAPI layerBellow;
@@ -115,6 +121,8 @@ namespace TP.ConcurrentProgramming.BusinessLogic
 
                         ball.Velocity = new BLVector(v1.x - scale1 * deltax, v1.y - scale1 * deltay);
                         databall.Velocity = new BLVector(v2.x + scale2 * deltax, v2.y + scale2 * deltay);
+
+                        logger.Log($"Collision - ball {ball.Id}, ball {databall.Id}. New velocities: ball1 ({Math.Round(ball.Velocity.x, 4)}, {Math.Round(ball.Velocity.y, 4)}), ball2 ({Math.Round(databall.Velocity.x, 4)}, {Math.Round(databall.Velocity.y, 4)})");
                     }
                 }
             }
