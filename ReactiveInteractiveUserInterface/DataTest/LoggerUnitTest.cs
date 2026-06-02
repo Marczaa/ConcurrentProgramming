@@ -28,6 +28,8 @@ namespace TP.ConcurrentProgramming.Data.Test
 
             Assert.IsNotNull(logFilePath);
 
+            newInstance.writeFile(null, null);
+
             string lastLine = File.ReadLines(logFilePath).LastOrDefault();
 
             Assert.AreEqual(logEntry, lastLine);
