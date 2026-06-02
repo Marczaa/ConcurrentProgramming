@@ -28,7 +28,7 @@ namespace TP.ConcurrentProgramming.Data.Test
 
             Assert.IsNotNull(logFilePath);
 
-            newInstance.writeFile(null, null);
+            Thread.Sleep(newInstance.GetWriteInterval() * 2);
 
             string lastLine = File.ReadLines(logFilePath).LastOrDefault();
 

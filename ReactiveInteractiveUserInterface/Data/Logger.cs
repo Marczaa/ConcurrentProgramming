@@ -13,6 +13,7 @@ namespace TP.ConcurrentProgramming.Data
         private string? logFilePath;
         private readonly object fileLock = new object();
         private System.Timers.Timer writeTimer;
+        private int writeInterval = 1000;
 
         private ConcurrentQueue<string> writeQueue = new ConcurrentQueue<string>();
 
@@ -20,10 +21,15 @@ namespace TP.ConcurrentProgramming.Data
         {
             logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "log.txt");
 
-            writeTimer = new System.Timers.Timer(100);
+            writeTimer = new System.Timers.Timer(writeInterval);
             writeTimer.Elapsed += writeFile;
             writeTimer.AutoReset = true;
             writeTimer.Enabled = true;
+        }
+
+        public int GetWriteInterval()
+        {
+            return writeInterval;
         }
 
 
@@ -33,7 +39,7 @@ namespace TP.ConcurrentProgramming.Data
             writeQueue.Enqueue(logEntry);
         }
 
-        public async void writeFile(Object source, ElapsedEventArgs e)
+        private async void writeFile(Object source, ElapsedEventArgs e)
         {
             lock (fileLock)
             {
