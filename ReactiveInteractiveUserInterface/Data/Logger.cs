@@ -21,7 +21,6 @@ namespace TP.ConcurrentProgramming.Data
             logFilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "log.txt");
 
             writeTimer = new System.Timers.Timer(100);
-            // Hook up the Elapsed event for the timer. 
             writeTimer.Elapsed += writeFile;
             writeTimer.AutoReset = true;
             writeTimer.Enabled = true;
